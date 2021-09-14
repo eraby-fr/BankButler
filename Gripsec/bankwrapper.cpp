@@ -14,6 +14,7 @@ BankWrapper::BankWrapper(const QSettings &config)
 bool BankWrapper::RequestAmount(QString &output)
 {
     QStringList args;
+    args << "bank";
     args << "list";
     args << "--formatter=csv";
     args << "--no-header";
@@ -93,6 +94,7 @@ QStringList BankWrapper::GenerateBooBankHistoryCLI(const QDate & date)
     conditionDate = conditionDate.addDays(-1);
 
     QStringList args;
+    args << "bank";
     args << "history";
     args << m_accountID;
     args << "--condition";
