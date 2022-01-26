@@ -1,0 +1,59 @@
+@startuml Bankbutler
+hnote across  #lime:First step collect data from woob
+loop numOfRemainingRetry = 3
+    GripSec -> wrapperProcess: RequestHistory(<i>QString</i> history, <i>QDate</i> currentDate())
+    wrapperProcess -> GripSec : Fill history
+end
+
+GripSec -> analyzerProcess : ParseBankHistory(<i>QString</i>history, <i>expense_categorized</i> categorized, <i>expense_categorized_detail</i> categorizedDetails, <i>expense_uncategorized</i> uncategorized);
+note left of analyzerProcess
+    Parse each line of history :
+        1) Get the amount and the label
+        2) Compare the label with RegEx speciied in GripSec.conf at section [RegExp]
+            if match, inset it in <b>categorized</b> and <b>expense_categorized_detail</b>
+            otherwise insert it in <b>expense_uncategorized</b>
+        3) Compare the label with RegEx speciied in GripSec.conf at section [MonthlyExpense]
+            If match increase <b>m_MonthlyAlreadySpent</b>
+
+    Diff between <b>categorized</b> and <b>expense_categorized_detail</b> :
+        First is only an amount linked to a label
+        Second il the list of each entry. Also linked to the same label
+
+end note
+analyzerProcess -> GripSec : Fill categorized, expense_categorized_detail, expense_uncategorized
+
+loop numOfRemainingRetry
+    GripSec -> wrapperProcess: RequestAmount(<i>QString</i> amount)
+    wrapperProcess -> GripSec : Fill amount 
+end
+
+hnote across  #lime:Second step : analyze it thanks to GripSec.conf
+
+GripSec -> analyzerProcess : ParseBankAmount(<i>QString</i> amount, <i>balances</i> allBalances, <i>float</i> spendableAmount);
+analyzerProcess -> analyzerProcess : applyMonthlyExpenses(<i>float</i> amount)
+note left of analyzerProcess
+    - spendableAmount is the content of main account minus <b>m_MonthlyAlreadySpent</b>
+        Here main account is hardcoded :/
+    - <b>balances</b> is a list of account labels associated to there amount
+    
+end note
+analyzerProcess -> GripSec : Fill balances and spendableAmount
+
+hnote across #lime:Process all saving and debt from .ini and .csv.
+
+GripSec -> savingsProcess : GetSavings()
+GripSec -> debtProcess : getLiabilities()
+
+hnote across #lime:Generate mail
+GripSec -> senderProcess : ProcessBalances
+GripSec -> senderProcess : ProcessExpenses
+GripSec -> senderProcess : ProcessSaving
+GripSec -> senderProcess : ProcessLiabilities
+GripSec -> senderProcess : ProcessRemainingMonthlyExpense
+GripSec -> senderProcess : ProcessExpensesDetail
+GripSec -> senderProcess : SendMail
+
+
+
+
+@enduml
