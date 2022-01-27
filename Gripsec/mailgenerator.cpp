@@ -234,12 +234,22 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const float &
         double set_ammount = double(fullBalances.at(i).second.second);
         double free_amount = full_amount - set_ammount;
 
-        m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2 Eur</td><td class=\"tdRight\">%3 Eur</td><td class=\"tdRight\">%4 Eur</td></tr>\n")
-                            .arg(fullBalances.at(i).first)
-                            .arg(full_amount)
-                            .arg(set_ammount)
-                            .arg(free_amount)
-                            );
+        if(set_ammount>0.0f)
+        {
+            m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2 Eur</td><td class=\"tdRight\">%3 Eur</td><td class=\"tdRight\">%4 Eur</td></tr>\n")
+                                .arg(fullBalances.at(i).first)
+                                .arg(full_amount)
+                                .arg(set_ammount)
+                                .arg(free_amount)
+                                );
+        }
+        else
+        {
+            m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2 Eur</td><td class=\"tdRight\"></td><td class=\"tdRight\"></td></tr>\n")
+                                .arg(fullBalances.at(i).first)
+                                .arg(full_amount)
+                                );
+        }
     }
     m_balances.append("        </table>\n        </p>\n");
 }
