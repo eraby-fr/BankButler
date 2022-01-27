@@ -224,15 +224,21 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const float &
                          "                <col style=\"width:400px\">\n"\
                          "                <col>\n"\
                          "                <col>\n"\
+                         "                <col>\n"\
                          "            </colgroup>\n"\
-                         "            <tr><th>Compte</th><th>Montant réel</th><th>Montant non affecté</th></tr>\n");
+                         "            <tr><th>  </th><th>Montant réel</th><th>Affecté</th><th>Epargne pure</th></tr>\n");
 
     for(int i=0; i<fullBalances.size(); ++i)
     {
-        m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2Eur</td><td class=\"tdRight\">%3Eur</td></tr>\n")
+        double full_amount = double(fullBalances.at(i).second.first);
+        double set_ammount = double(fullBalances.at(i).second.second);
+        double free_amount = full_amount - set_ammount;
+
+        m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2 Eur</td><td class=\"tdRight\">%3 Eur</td><td class=\"tdRight\">%4 Eur</td></tr>\n")
                             .arg(fullBalances.at(i).first)
-                            .arg(double(fullBalances.at(i).second.first))
-                            .arg(double(fullBalances.at(i).second.second))
+                            .arg(full_amount)
+                            .arg(set_ammount)
+                            .arg(free_amount)
                             );
     }
     m_balances.append("        </table>\n        </p>\n");
@@ -427,7 +433,7 @@ QString MailGenerator::generateFooter(const QTime & timestampStart)
             .arg("        <p>Gripsec</p>")
             .arg("        <p>Mail généré en ")
             .arg(timestampStart.msecsTo(QTime::currentTime()))
-            .arg(" ms par Gripsec V1.5.</p>")
+            .arg(" ms par Gripsec V1.6.</p>")
             .arg("    </body>")
             .arg("</html>");
 }

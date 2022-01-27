@@ -3,8 +3,6 @@
 #include <QDirIterator>
 #include <QDebug>
 
-const QMap<QString, QString> SavingManager::LUT_Hardcoded_Saving2Balance = { {"LDD","Livret Developpement Du... M Etienne Raby"} ,{"CEL","Compte Epargne Logement M Etienne Raby"} };
-
 SavingManager::SavingManager(QSettings &config):
     m_settings(config)
 {
@@ -85,37 +83,33 @@ savings SavingManager::GetSavings()
     return results;
 }
 
-balances SavingManager::GetBalanceWithSavingRemoved(const balances& fullBalance, const savings& saving)
+void SavingManager::UpdateBalanceWithSaving(balances& fullBalance, const savings& saving)
 {
-    balances out = fullBalance;
-
     QList<QString> accountNameLst = saving.uniqueKeys();
     for (int i = 0; i < accountNameLst.size(); ++i)
     {
-        QString accountName = accountNameLst.at(i);
-        QString balanceKey = LUT_Hardcoded_Saving2Balance[accountName];
+        QString savingAccountName = accountNameLst.at(i);
+        for (int j = 0; j < fullBalance.size(); ++j)
+        {
+            QString ballanceAccountName = fullBalance.at(j).first;
 
+            if(savingAccountName == ballanceAccountName)
+            {
+                qDebug() << "SavingManager : UpdateBalanceWithSaving : match for " << savingAccountName;
 
-
-        //Find the associated Balance
-
-
-
-        /* balance :
-         * Compte Cheque Mr Ou Mme Raby Etienne : 489.46Eur
-         * Compte Epargne Logement M Etienne Raby : 7349.01Eur
-         * Plan Epargne Logement M Etienne Raby : 3090.05Eur
-         * Livret A Particuliers M Victor Raby : 2761Eur
-         * Livret Developpement Du... M Etienne Raby : 7546.36Eur
-         * BOURSORAMA BANQUE : 200.9Eur
-         */
-
-        /* Saving :
-         * LDD
-         * CEL
-         * */
-
+                QList<QPair<QString,float>> values = saving.values(savingAccountName);
+                double alreadySet = 0.0f;
+                for (int k = (values.size()-1); k >= 0 ; --k)
+                {
+                    double value = static_cast<double>(values.at(k).second);
+                    if (value > 0.0f)
+                    {
+                        alreadySet += value;
+                    }
+                }
+                qDebug() << "SavingManager :                         " << savingAccountName << "has" << alreadySet << "Eur already set";
+                fullBalance[j].second.second = alreadySet;
+            }
+        }
     }
-
-    return out;
 }

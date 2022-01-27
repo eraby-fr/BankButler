@@ -13,7 +13,7 @@ public:
 
     savings GetSavings();
 
-    balances GetBalanceWithSavingRemoved(const balances& realAmount, const savings& saving);
+    void UpdateBalanceWithSaving(balances& realAmount, const savings& saving);
 
 #ifdef UNIT_TEST
     struct SavingManagerBackDoor;
@@ -24,5 +24,4 @@ private:
     QString m_savingFolderPath;
     QStringList m_filePathList;
     QSettings &m_settings;
-    static const QMap<QString, QString> LUT_Hardcoded_Saving2Balance;
 };

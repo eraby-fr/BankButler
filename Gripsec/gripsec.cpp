@@ -124,6 +124,8 @@ int GripSec::AnalyseAccount(bool sendToCc, bool stubWoob)
             savingsProcess.ParseFileSystem();
             savings savingsToPrint = savingsProcess.GetSavings();
 
+            savingsProcess.UpdateBalanceWithSaving(allBalances, savingsToPrint);
+
             debtProcess.loadLiabilitiesFromFileSystem();
             debtProcess.computeHistory(history);
             const QList<Liability> & liabilities = debtProcess.getLiabilities();
