@@ -82,7 +82,7 @@ GPR02679543@banquepopulaire;None;Pret Immobilier Non Eli... Mr Ou Mme Raby Etien
         if(splittedLine.size() >= 8)
         {
             qDebug() << "    -> Balance:" << splittedLine.at(INDEX_LABEL) << "=" << splittedLine.at(INDEX_BALANCE) << "Eur";
-            out_balances.append(QPair<QString,float>(splittedLine.at(INDEX_LABEL), splittedLine.at(INDEX_BALANCE).toFloat()));
+            out_balances.append(QPair<QString, QPair<float, float>>(splittedLine.at(INDEX_LABEL), QPair<float, float>(splittedLine.at(INDEX_BALANCE).toFloat(), 0.0f)));
 
             if((splittedLine.at(INDEX_LABEL)).contains("Compte Cheque Mr Ou Mme Raby Etienne"))
             {

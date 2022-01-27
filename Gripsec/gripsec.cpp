@@ -112,7 +112,6 @@ int GripSec::AnalyseAccount(bool sendToCc)
         if(wrapperSucces)
         {
             balances allBalances;
-            balances spendableBalances;
             float spendableAmount = 0.0f;
             analyzerProcess.ParseBankAmount(amount, allBalances, spendableAmount);
             const QList<MonthlyExpense> & remainingMonthlyExpense = analyzerProcess.GetRemainingMonthlyExpense();
@@ -124,7 +123,7 @@ int GripSec::AnalyseAccount(bool sendToCc)
             debtProcess.computeHistory(history);
             const QList<Liability> & liabilities = debtProcess.getLiabilities();
 
-            senderProcess.ProcessBalances(allBalances, spendableBalances, spendableAmount);
+            senderProcess.ProcessBalances(allBalances, spendableAmount);
             senderProcess.ProcessExpenses(categorized, uncategorized);
             senderProcess.ProcessSaving(savingsToPrint, allBalances);
             senderProcess.ProcessLiabilities(liabilities);

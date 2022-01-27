@@ -1,5 +1,5 @@
 @startuml Bankbutler
-hnote across  #lime:First step collect data from woob
+== First step collect data from woob ==
 loop numOfRemainingRetry = 3
     GripSec -> wrapperProcess: RequestHistory(<i>QString</i> history, <i>QDate</i> currentDate())
     wrapperProcess -> GripSec : Fill history
@@ -27,9 +27,16 @@ loop numOfRemainingRetry
     wrapperProcess -> GripSec : Fill amount 
 end
 
-hnote across  #lime:Second step : analyze it thanks to GripSec.conf
+== Second step : analyze it thanks to GripSec.conf ==
 
 GripSec -> analyzerProcess : ParseBankAmount(<i>QString</i> amount, <i>balances</i> allBalances, <i>float</i> spendableAmount);
+
+hnote over analyzerProcess #Green
+    TODO : <i>balances</i> have to get 2 amounts :
+    "full" and "availlable=0"
+end note
+
+
 analyzerProcess -> analyzerProcess : applyMonthlyExpenses(<i>float</i> amount)
 note left of analyzerProcess
     - spendableAmount is the content of main account minus <b>m_MonthlyAlreadySpent</b>
@@ -39,12 +46,20 @@ note left of analyzerProcess
 end note
 analyzerProcess -> GripSec : Fill balances and spendableAmount
 
-hnote across #lime:Process all saving and debt from .ini and .csv.
+== Process all saving and debt from .ini and .csv. ==
 
 GripSec -> savingsProcess : GetSavings()
+hnote over savingsProcess #Red
+    TODO : load the label associated to an account 
+    from Gripsec.conf? From meta of the folder?
+    Inject <i>balances</i> to generate "availlable"
+end note
 GripSec -> debtProcess : getLiabilities()
 
-hnote across #lime:Generate mail
+== Generate mail ==
+hnote over senderProcess #Green
+    TODO : print also "availlable"
+end note
 GripSec -> senderProcess : ProcessBalances
 GripSec -> senderProcess : ProcessExpenses
 GripSec -> senderProcess : ProcessSaving

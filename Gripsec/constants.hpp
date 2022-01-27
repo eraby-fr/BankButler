@@ -5,7 +5,7 @@
 #include <QString>
 #include <array>
 
-typedef QList<QPair<QString, float>> balances;
+typedef QList<QPair<QString, QPair<float, float>>> balances;
 typedef QMultiMap<QString, QPair<QString, float>> savings;
 
 const QString list_separator = "||";

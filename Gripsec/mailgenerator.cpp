@@ -209,7 +209,7 @@ void MailGenerator::ProcessExpenses(const expense_categorized & expenseCategoriz
     }
 }
 
-void MailGenerator::ProcessBalances(const balances & fullBalances, const balances & spendableBalances, const float & spendableAmount)
+void MailGenerator::ProcessBalances(const balances & fullBalances, const float & spendableAmount)
 {
     m_spendableAmount = spendableAmount;
 
@@ -219,36 +219,26 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const balance
         return;
     }
 
-    m_balances.append("        <h2>Montants réels</h2>\n");
-    m_balances.append("        <p>Voici le montant réel de chaque compte :\n            <ul>\n");
+    m_balances.append("        <p>Voici le montant de chaque compte :\n            <ul>\n");
     for(int i=0; i<fullBalances.size(); ++i)
     {
-        float amount = fullBalances.at(i).second;
+        float amount = fullBalances.at(i).second.first;
         if(amount <= 500.0f)
         {
-            m_balances.append(QString("              <li><strong>%1 : %2Eur</strong><br></li>\n")
+            m_balances.append(QString("              <li><strong>%1 : Réel=%2Eur Non affecté=%3Eur</strong><br></li>\n")
                               .arg(fullBalances.at(i).first)
-                              .arg(double(fullBalances.at(i).second))
+                              .arg(double(fullBalances.at(i).second.first))
+                              .arg(double(fullBalances.at(i).second.second))
                               );
         }
         else
         {
-            m_balances.append(QString("              <li>%1 : %2Eur<br></li>\n")
+            m_balances.append(QString("              <li>%1 : Réel=%2Eur Non affecté=%3Eur<br></li>\n")
                               .arg(fullBalances.at(i).first)
-                              .arg(double(fullBalances.at(i).second))
+                              .arg(double(fullBalances.at(i).second.first))
+                              .arg(double(fullBalances.at(i).second.second))
                               );
         }
-    }
-    m_balances.append("            </ul>\n        </p>\n");
-
-    m_balances.append("        <h2>Trésorerie disponible</h2>\n            <ul>\n");
-
-    for(int i=0; i<spendableBalances.size(); ++i)
-    {
-        m_balances.append(QString("              <li>%1 : %2Eur<br></li>\n")
-                          .arg(spendableBalances.at(i).first)
-                          .arg(double(spendableBalances.at(i).second))
-                          );
     }
     m_balances.append("            </ul>\n        </p>\n");
 }

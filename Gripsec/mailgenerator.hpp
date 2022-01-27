@@ -14,7 +14,7 @@ public:
 
     void ProcessExpenses(const expense_categorized & expenseCategorizedHash, expense_uncategorized expenseUncategorizedList);
 
-    void ProcessBalances(const balances & allBalances, const balances & spendableBalances, const float & spendableAmount);
+    void ProcessBalances(const balances & allBalances, const float & spendableAmount);
 
     void ProcessSaving(const savings & allSavings, const balances &allBalances);
 
