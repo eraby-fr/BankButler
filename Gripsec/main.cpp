@@ -42,10 +42,13 @@ int main(int argc, char *argv[])
     parser.addOption(ccOption);
     QCommandLineOption verboseOption("verbose", "Show debug traces");
     parser.addOption(verboseOption);
+    QCommandLineOption stubOption("stub", "Stub Woob and inject hardcoded data");
+    parser.addOption(stubOption);
     parser.process(app);
 
     bool sendToCC = parser.isSet(ccOption);
     verbose  = parser.isSet(verboseOption);
+    bool stubWoob = parser.isSet(stubOption);
 
 
     //Start process
@@ -56,5 +59,5 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    return mainObject.AnalyseAccount(sendToCC);
+    return mainObject.AnalyseAccount(sendToCC, stubWoob);
 }

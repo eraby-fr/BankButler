@@ -50,7 +50,7 @@ void GripSec::GenerateInitialConfig()
     m_conf.endGroup();
     m_conf.endGroup();
 
-    m_conf.setValue("Account", "CPT10719166171@banquepopulaire");
+    m_conf.setValue("Account", "myaccount@banquepopulaire");
     m_conf.setValue("BoobankPath", "~/.bin/weboob/bin/boobank");
     m_conf.setValue("BoobankMaxEntries", 4000);
 
@@ -71,7 +71,7 @@ void GripSec::GenerateInitialConfig()
     qDebug() << "Gripsec wrote a template to help you at : " << m_conf.fileName();
 }
 
-int GripSec::AnalyseAccount(bool sendToCc)
+int GripSec::AnalyseAccount(bool sendToCc, bool stubWoob)
 {
     enum{NO_ERROR = 0, ERROR = 1};
 
@@ -89,9 +89,14 @@ int GripSec::AnalyseAccount(bool sendToCc)
 
     bool wrapperSucces = false;
 
+    if (stubWoob)
+    {
+        m_conf.setValue("Account", "myMainAccount@mybank");
+    }
+
     while ((!wrapperSucces) && (numOfRemainingRetry > 0))
     {
-        wrapperSucces = wrapperProcess.RequestHistory(history, QDate::currentDate());
+        wrapperSucces = wrapperProcess.RequestHistory(history, QDate::currentDate(), stubWoob);
         if(!wrapperSucces) numOfRemainingRetry--;
     }
 
@@ -105,7 +110,7 @@ int GripSec::AnalyseAccount(bool sendToCc)
         wrapperSucces = false;
         while ((!wrapperSucces) && (numOfRemainingRetry > 0))
         {
-            wrapperSucces = wrapperProcess.RequestAmount(amount);
+            wrapperSucces = wrapperProcess.RequestAmount(amount, stubWoob);
             if(!wrapperSucces) numOfRemainingRetry--;
         }
 

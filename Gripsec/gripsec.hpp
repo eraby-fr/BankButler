@@ -9,7 +9,7 @@ public:
     GripSec();
     bool LoadConfig();
     void GenerateInitialConfig();
-    int AnalyseAccount(bool sendToCc=false);
+    int AnalyseAccount(bool sendToCc=false, bool stubWoob=false);
 
 private:
     QSettings m_conf;

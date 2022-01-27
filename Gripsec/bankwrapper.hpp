@@ -9,8 +9,8 @@ class BankWrapper
 public:
     BankWrapper(const QSettings &config);
 
-    bool RequestAmount(QString &output);
-    bool RequestHistory(QString &output, QDate date = QDate::currentDate());
+    bool RequestAmount(QString &output, bool stubWoob=false);
+    bool RequestHistory(QString &output, QDate date = QDate::currentDate(), bool stubWoob=false);
 
 #ifdef UNIT_TEST
     struct BankWrapperBackDoor;
@@ -18,6 +18,9 @@ public:
 #endif
 
 private:
+    bool InjectHardcodedAmount(QString &output);
+    bool InjectHardcodedHistory(QString &output, QDate date);
+
     QStringList GenerateBooBankHistoryCLI(const QDate & date);
 
     QString m_accountID;

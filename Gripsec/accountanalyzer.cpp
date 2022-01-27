@@ -54,17 +54,6 @@ AccountAnalyzer::AccountAnalyzer(const QSettings &config) :
 
 void AccountAnalyzer::ParseBankAmount(const QString & inputStr, balances & out_balances, float & out_spendableAmount)
 {
-/*
-id;url;label;currency;bank_name;type;owner_type;balance;coming;iban;ownership;paydate;paymin;cardlimit;number;valuation_diff;valuation_diff_ratio;parent;opening_date
-AXNFI807803518@banquepopulaire;None;Credit Renouvelable Fac... M Etienne Raby;EUR;Not loaded;4;Not loaded;0.00;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-CPT10719166171@banquepopulaire;None;Compte Cheque Mr Ou Mme Raby Etienne;EUR;Not loaded;1;Not loaded;1785.44;Not loaded;FR7613807005471071916617188;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-CPT31107502191@banquepopulaire;None;Compte Epargne Logement M Etienne Raby;EUR;Not loaded;2;Not loaded;11026.73;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-CPT31180442638@banquepopulaire;None;Plan Epargne Logement M Etienne Raby;EUR;Not loaded;2;Not loaded;2898.51;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-CPT51183453033@banquepopulaire;None;Livret Developpement Du... M Etienne Raby;EUR;Not loaded;2;Not loaded;7579.07;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-GPR02679541@banquepopulaire;None;Pret Immobilier Non Eli... Mr Ou Mme Raby Etienne;EUR;Not loaded;4;Not loaded;-18104.70;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-GPR02679542@banquepopulaire;None;Pret Immobilier Non Eli... Mr Ou Mme Raby Etienne;EUR;Not loaded;4;Not loaded;-55702.23;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-GPR02679543@banquepopulaire;None;Pret Immobilier Non Eli... Mr Ou Mme Raby Etienne;EUR;Not loaded;4;Not loaded;-43404.92;Not loaded;Not available;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded
-*/
     qDebug() << "AccountAnalyzer : Start parsing bank amounts to get all balances...";
     QStringList list = inputStr.split('\n', QString::SkipEmptyParts);
 
@@ -96,24 +85,6 @@ GPR02679543@banquepopulaire;None;Pret Immobilier Non Eli... Mr Ou Mme Raby Etien
 
 void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_categorized & out_categorized, expense_categorized_detail & out_categorized_detail, expense_uncategorized & out_uncategorized)
 {
-/*
-
- Date         Category     Label                                                  Amount
-------------+------------+---------------------------------------------------+-----------
- 2019-09-17   Order        SEPA DIRECTION GENE 220513013124958172 111 NNFR46Z    -104.00
- 2019-09-17   Order        SEPA DIRECTION GENE 220513013124958172 111 NNFR46Z     -89.00
- 2019-09-16   Transfer     M RABY ETIENNE                                        -200.00
- 2019-09-16   Transfer     M RABY ETIENNE                                         744.00
- 2019-09-16   Card         AU CHAR A BANCS22PLELO                                -571.40
- 2019-09-16   Card         VENTE-PRIVEE.CO93ST DENIS                              -96.93
- 2019-09-16   Card         INTERMARCHE 22SAINT-AGATHON                            -73.65
- 2019-09-16   Card         LA CHAROLAISE 22PLOUMAGOAR                             -62.96
- 2019-09-16   Card         LES GALLO PAINS22PLOUMAGOAR                             -6.60
- 2019-09-16   Card         INTERMARCHE NFC22SAINT-AGATHON                          -5.45
- 2019-09-16   Card         LES GALLO PAINS22PLOUMAGOAR                             -4.20
- 2019-09-16   Order        SEPA French Data Ne 371 - fdn aout 2019 FDN-001-37     -29.00
- 2019-09-16   Order        SEPA OVH SAS Payment order 113007350 RE12759-OVH-F      -1.19
- */
     qDebug() << "AccountAnalyzer : Start parsing bank history...";
 
     QStringList list = inputSample.split('\n', QString::SkipEmptyParts);

@@ -11,8 +11,13 @@ BankWrapper::BankWrapper(const QSettings &config)
     m_entryLimit = config.value("BoobankMaxEntries").toInt();
 }
 
-bool BankWrapper::RequestAmount(QString &output)
+bool BankWrapper::RequestAmount(QString &output, bool stubWoob)
 {
+    if(stubWoob)
+    {
+        return InjectHardcodedAmount(output);
+    }
+
     QStringList args;
     args << "bank";
     args << "list";
@@ -54,8 +59,13 @@ bool BankWrapper::RequestAmount(QString &output)
 }
 
 
-bool BankWrapper::RequestHistory(QString &output, QDate date)
+bool BankWrapper::RequestHistory(QString &output, QDate date, bool stubWoob)
 {
+    if(stubWoob)
+    {
+        return InjectHardcodedHistory(output, date);
+    }
+
     QStringList full_CLI = this->GenerateBooBankHistoryCLI(date);
 
     QProcess boobank;
@@ -103,4 +113,27 @@ QStringList BankWrapper::GenerateBooBankHistoryCLI(const QDate & date)
     args << QString::number(m_entryLimit);
 
     return args;
+}
+
+bool BankWrapper::InjectHardcodedAmount(QString &output)
+{
+    output = QString("id;url;label;currency;bank_name;type;owner_type;balance;coming;iban;ownership;paydate;paymin;cardlimit;number;valuation_diff;valuation_diff_ratio;company_name;parent;opening_date\n"\
+                        "myMainAccount@mybank;None;Compte Cheque Mr Ou Mme Raby Etienne;EUR;NotLoaded;1;NotAvailable;10000.01;NotLoaded;NotLoaded;co-owner;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded\n"\
+                        "NotLoaded@banquepopulaire;None;Compte Epargne Logement M Etienne Raby;EUR;NotLoaded;2;NotAvailable;20000.02;NotLoaded;NotAvailable;owner;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded\n"\
+                        "NotLoaded@banquepopulaire;None;Plan Epargne Logement M Etienne Raby;EUR;NotLoaded;2;NotAvailable;30000.03;NotLoaded;NotAvailable;owner;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded\n"\
+                        "NotLoaded@banquepopulaire;None;Livret Developpement Du... M Etienne Raby;EUR;NotLoaded;2;NotAvailable;40000.04;NotLoaded;NotAvailable;owner;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded;NotLoaded\n"
+                        );
+    return true;
+}
+bool BankWrapper::InjectHardcodedHistory(QString &output, QDate date)
+{
+    output = QString(" Date         Category     Label                                                  Amount\n"\
+                        "------------+------------+---------------------------------------------------+-----------\n"\
+                        " %1-%2-%3   Card         SNCF DOUAI                                             200.00\n"\
+                        " %1   Transfer     HELLO WORLD                                             39.03\n"\
+                        " 2022-01-26   Card         BOUTIQ75PARIS                                          -11.60\n"
+                        )
+                .arg(date.year()).arg(date.month()).arg(date.day())
+                ;
+    return true;
 }

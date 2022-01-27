@@ -219,28 +219,23 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const float &
         return;
     }
 
-    m_balances.append("        <p>Voici le montant de chaque compte :\n            <ul>\n");
+    m_balances.append("        <table>\n"\
+                         "            <colgroup>\n"\
+                         "                <col style=\"width:400px\">\n"\
+                         "                <col>\n"\
+                         "                <col>\n"\
+                         "            </colgroup>\n"\
+                         "            <tr><th>Compte</th><th>Montant réel</th><th>Montant non affecté</th></tr>\n");
+
     for(int i=0; i<fullBalances.size(); ++i)
     {
-        float amount = fullBalances.at(i).second.first;
-        if(amount <= 500.0f)
-        {
-            m_balances.append(QString("              <li><strong>%1 : Réel=%2Eur Non affecté=%3Eur</strong><br></li>\n")
-                              .arg(fullBalances.at(i).first)
-                              .arg(double(fullBalances.at(i).second.first))
-                              .arg(double(fullBalances.at(i).second.second))
-                              );
-        }
-        else
-        {
-            m_balances.append(QString("              <li>%1 : Réel=%2Eur Non affecté=%3Eur<br></li>\n")
-                              .arg(fullBalances.at(i).first)
-                              .arg(double(fullBalances.at(i).second.first))
-                              .arg(double(fullBalances.at(i).second.second))
-                              );
-        }
+        m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2Eur</td><td class=\"tdRight\">%3Eur</td></tr>\n")
+                            .arg(fullBalances.at(i).first)
+                            .arg(double(fullBalances.at(i).second.first))
+                            .arg(double(fullBalances.at(i).second.second))
+                            );
     }
-    m_balances.append("            </ul>\n        </p>\n");
+    m_balances.append("        </table>\n        </p>\n");
 }
 
 void MailGenerator::ProcessSaving(const savings & allSavings, const balances &allBalances)
@@ -259,7 +254,7 @@ void MailGenerator::ProcessSaving(const savings & allSavings, const balances &al
     for (int i = 0; i < accountNameLst.size(); ++i)
     {
         QString accountName = accountNameLst.at(i);
-        m_savings.append(QString("        <h2>%1</h2>\n").arg(accountName.mid(2)));
+        m_savings.append(QString("        <h2>%1</h2>\n").arg(accountName));
         m_savings.append("        <table>\n"\
                          "            <colgroup>\n"\
                          "                <col style=\"width:200px\">\n"\
