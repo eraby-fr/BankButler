@@ -55,17 +55,21 @@ AccountAnalyzer::AccountAnalyzer(const QSettings &config) :
 void AccountAnalyzer::ParseBankAmount(const QString & inputStr, balances & out_balances, float & out_spendableAmount)
 {
     qDebug() << "AccountAnalyzer : Start parsing bank amounts to get all balances...";
-    QStringList list = inputStr.split('\n', QString::SkipEmptyParts);
+    QStringList list = inputStr.split('\n', Qt::SkipEmptyParts);
 
     for(int i = 0; i < list.size(); ++i)
     {
         QString currentLine = list.at(i);
         if(currentLine.trimmed().isEmpty()) continue;
-        if(currentLine.contains(QRegularExpression("id;url;label;.*"))) continue;
+        static QRegularExpression re_header_list("id;url;label;.*");
+        static QRegularExpression re_credit_txt1(".*Immobilier.*");
+        static QRegularExpression re_credit_txt2(".*Credit.*");
+
+        if(currentLine.contains(re_header_list)) continue;
 
         //Remove credits
-        if(currentLine.contains(QRegularExpression(".*Immobilier.*"))) continue;
-        if(currentLine.contains(QRegularExpression(".*Credit.*"))) continue;
+        if(currentLine.contains(re_credit_txt1)) continue;
+        if(currentLine.contains(re_credit_txt2)) continue;
 
         QStringList splittedLine = currentLine.split(";");
         if(splittedLine.size() >= 8)
@@ -87,14 +91,17 @@ void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_cate
 {
     qDebug() << "AccountAnalyzer : Start parsing bank history...";
 
-    QStringList list = inputSample.split('\n', QString::SkipEmptyParts);
+    QStringList list = inputSample.split('\n', Qt::SkipEmptyParts);
 
     for(int i = 0; i < list.size(); ++i)
     {
         QString currentLine = list.at(i);
         if(currentLine.trimmed().isEmpty()) continue;
-        if(currentLine.contains(QRegularExpression("Date.*Category.*Label.*Amount"))) continue;
-        if(currentLine.contains(QRegularExpression("\\-+\\+\\-+\\+\\-+\\+\\-+"))) continue;
+        static QRegularExpression re_header("Date.*Category.*Label.*Amount");
+        static QRegularExpression re_comments("\\-+\\+\\-+\\+\\-+\\+\\-+");
+
+        if(currentLine.contains(re_header)) continue;
+        if(currentLine.contains(re_comments)) continue;
 
         qDebug() << "    -> Processing:" << currentLine;
         QString dateStr = currentLine.left(11).trimmed();
