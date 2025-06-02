@@ -42,7 +42,7 @@ savings SavingManager::GetSavings()
         qDebug() << "    -> Reading :" << m_filePathList.at(i);
 
         QTextStream in(&currentFile);
-        in.setCodec("UTF-8");
+        in.setEncoding(QStringConverter::Utf8);
 
         float amount = 0.0f;
         while(!in.atEnd())

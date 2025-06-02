@@ -43,7 +43,7 @@ void LiabilityManager::loadLiabilitiesFromFileSystem()
 void LiabilityManager::computeHistory(const QString & history)
 {
     qDebug() << "LiabilityManager : Start compute history...";
-    QStringList list = history.split('\n', QString::SkipEmptyParts);
+    QStringList list = history.split('\n', Qt::SkipEmptyParts);
 
     for(int i = 0; i < list.size(); ++i)
     {
