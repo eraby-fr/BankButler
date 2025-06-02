@@ -43,6 +43,7 @@ public:
 private:
     void insertCategorized(const ReGexpEnty& entry, float amount, expense_categorized & categorized);
     float applyMonthlyExpenses(const float & amount);
+    QString m_accountID;
 
     QList<ReGexpEnty> m_RegExp;
     QList<MonthlyExpense> m_MonthlyExpense;
