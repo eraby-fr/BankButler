@@ -7,6 +7,7 @@
 #include <QDate>
 
 
+const int INDEX_ID = 0;
 const int INDEX_LABEL = 2;
 const int INDEX_BALANCE = 7;
 //const int INDEX_CURRENCY = 3;
@@ -16,6 +17,8 @@ AccountAnalyzer::AccountAnalyzer(const QSettings &config) :
     m_SumOfExpectedMonthlyExpenses(0.0f)
 {
     qDebug() << "AccountAnalyzer : Start loading configuration...";
+    m_accountID = config.value("Account").toString();
+    qDebug() << "    -> Main Account =" << m_accountID;
     int numOfRegExp = config.value("NumOfRegExp", 0).toInt();
     qDebug() << "    -> Number of categories =" << numOfRegExp;
 
@@ -77,10 +80,12 @@ void AccountAnalyzer::ParseBankAmount(const QString & inputStr, balances & out_b
             qDebug() << "    -> Balance:" << splittedLine.at(INDEX_LABEL) << "=" << splittedLine.at(INDEX_BALANCE) << "Eur";
             out_balances.append(QPair<QString, QPair<float, float>>(splittedLine.at(INDEX_LABEL), QPair<float, float>(splittedLine.at(INDEX_BALANCE).toFloat(), 0.0f)));
 
-            if((splittedLine.at(INDEX_LABEL)).contains("Compte Cheque Mr Ou Mme Raby Etienne"))
+            if((splittedLine.at(INDEX_ID)).contains(m_accountID))
             {
                 float amount = splittedLine.at(INDEX_BALANCE).toFloat();
+                qDebug() << "    -> Found main account total value =" << amount;
                 out_spendableAmount = applyMonthlyExpenses(amount);
+                qDebug() << "    -> Applied monthly expense =" << out_spendableAmount;
             }
         }
     }

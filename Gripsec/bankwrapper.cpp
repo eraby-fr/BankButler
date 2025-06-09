@@ -108,7 +108,7 @@ QStringList BankWrapper::GenerateBooBankHistoryCLI(const QDate & date)
     args << "history";
     args << m_accountID;
     args << "--condition";
-    args << QString("date>%3-%4-%5").arg(conditionDate.year()).arg(conditionDate.month()).arg(conditionDate.day());
+    args << QString("date>%3-%4-%5 00:00:00").arg(conditionDate.year()).arg(conditionDate.month()).arg(conditionDate.day());
     args << "-n";
     args << QString::number(m_entryLimit);
 
