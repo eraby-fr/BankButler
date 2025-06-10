@@ -407,8 +407,8 @@ void MailGenerator::ProcessExpensesDetail(expense_categorized_detail categorized
             m_categorizedDetailTable.append(QString("          <tr><td class=\"white\">%1</td><td class=\"coloredCenter\">%2</td><td class=\"whiteCenter\">%3</td><td class=\"whiteCenter\">%4</td></tr>\n")
                                       .arg(current.date.toString("dd/MM/yyyy"))
                                       .arg(QString::number( static_cast<double>(current.amount), 'f', 2))
-                                      .arg(current.bank_cateory)
-                                      .arg(current.label));
+                                      .arg(current.label)
+                                      .arg(current.bank_cateory));
         }
 
         m_categorizedDetailTable.append(QString("%1\n%2\n")
