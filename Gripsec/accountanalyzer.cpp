@@ -10,6 +10,10 @@
 const int INDEX_ID = 0;
 const int INDEX_LABEL = 2;
 const int INDEX_BALANCE = 7;
+const int INDEX_HISTORY_LABEL = 9;
+const int INDEX_HISTORY_AMOUNT = 10;
+const int INDEX_HISTORY_CATEGORY = 8;
+const int INDEX_HISTORY_DATE = 2;
 //const int INDEX_CURRENCY = 3;
 
 AccountAnalyzer::AccountAnalyzer(const QSettings &config) :
@@ -101,25 +105,28 @@ void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_cate
     for(int i = 0; i < list.size(); ++i)
     {
         QString currentLine = list.at(i);
+
         if(currentLine.trimmed().isEmpty()) continue;
-        static QRegularExpression re_header("Date.*Category.*Label.*Amount");
+        static QRegularExpression re_header("id;url;date;rdate;vdate.*");
         static QRegularExpression re_comments("\\-+\\+\\-+\\+\\-+\\+\\-+");
 
         if(currentLine.contains(re_header)) continue;
         if(currentLine.contains(re_comments)) continue;
 
         qDebug() << "    -> Processing:" << currentLine;
-        QString dateStr = currentLine.left(11).trimmed();
-        QDate date = QDate::fromString(dateStr, date_format);
-        currentLine = currentLine.mid(11);
 
-        QString bank_category = currentLine.left(14).trimmed();
-        currentLine = currentLine.mid(14);
+        QStringList splittedLine = currentLine.split(";");
+        //id;url;date;rdate;vdate;bdate;type;raw;category;label;amount;coming;card;commission;gross_amount;original_amount;original_currency;country;original_commission;original_commission_currency;original_gross_amount;attachments;investments;counterparty;bank_transaction_code
+        // 0; 1 ; 2  ; 3   ; 4   ;5    ;6   ;7  ;8       ;9    ;10
+        if(splittedLine.size() < INDEX_HISTORY_AMOUNT)
+        {
+            qDebug() << "        -> DROP Line : because splittedLine.size() < INDEX_HISTORY_AMOUNT";
+        }
 
-        float amount = currentLine.right(11).trimmed().toFloat();
-        currentLine.chop(11);
-
-        QString label = currentLine.trimmed();
+        QDate date = QDate::fromString(splittedLine.at(INDEX_HISTORY_DATE), date_format);
+        QString bank_category = splittedLine.at(INDEX_HISTORY_CATEGORY);
+        QString label = splittedLine.at(INDEX_HISTORY_LABEL);
+        float amount = splittedLine.at(INDEX_HISTORY_AMOUNT).toFloat();
 
         bool entry_found = false;
         for(int regexIndex=0; (regexIndex<m_RegExp.size() && !entry_found ); ++regexIndex)

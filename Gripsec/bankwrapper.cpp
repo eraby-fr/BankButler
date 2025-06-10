@@ -111,6 +111,7 @@ QStringList BankWrapper::GenerateBooBankHistoryCLI(const QDate & date)
     args << QString("date>%3-%4-%5 00:00:00").arg(conditionDate.year()).arg(conditionDate.month()).arg(conditionDate.day());
     args << "-n";
     args << QString::number(m_entryLimit);
+    args << "--formatter=csv";
 
     return args;
 }
@@ -128,15 +129,11 @@ bool BankWrapper::InjectHardcodedAmount(QString &output)
 bool BankWrapper::InjectHardcodedHistory(QString &output, QDate date)
 {
     output = QString(   " Date         Category     Label                                                  Amount\n"\
-                        "------------+------------+---------------------------------------------------+-----------\n"\
-                        " 2025-05-21   Crédit       ECHEANCE DE CREDIT - DONT CAP    194,32 ASS.    0,    -194.32\n"\
-                        " 2025-05-22   Virement reç LAMBD OYJ - REF 7U DeadDeadDeadnbvcxw 313739 - 7 2      84.55\n"\
-                        " 2025-05-22   Virement reç MHP PRESTATIONS SANTE PL -                              9.00\n"\
-                        " 2025-05-21   Chèque - à c CHEQUE N° ...0401 - 444520052888532040000BPL  1600     -50.00\n"\
-                        " 2025-05-21   Vêtements et Zaro.com       ES Arteixo - 170525 CB****0000 - 67     -67.85\n"\
-                        " 2025-05-20   Virement reç ASS FORMATION PERMANENTE - BRE007 ANFH 0072-5-13 2     343.89\n"\
-                        " 2025-05-20   Carburant    INTERMARCHE - 180525 CB****0000                        -66.00\n"\
-
+                        "id;url;date;rdate;vdate;bdate;type;raw;category;label;amount;coming;card;commission;gross_amount;original_amount;original_currency;country;original_commission;original_commission_currency;original_gross_amount;attachments;investments;counterparty;bank_transaction_code\n"\
+                        "@banquepopulaire;Not loaded;2025-06-10 00:00:00;Not loaded;Not loaded;Not loaded;0;Not loaded;Banque et assurances;MOIF - ECHEANCE JUIN     2055 - 00100004489144B;-134;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;[];Not loaded;Not loadede\n"\
+                        "@banquepopulaire;Not loaded;2025-06-10 00:00:00;Not loaded;Not loaded;Not loaded;0;Not loaded;Internet et téléphonie;BOUYGUES SFR - 06xxxxxxxx - coin;-12.9900000000000002131628207280300557613372802734375;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;[];Not loaded;Not loadede\n"\
+                        "@banquepopulaire;Not loaded;2025-06-10 00:00:00;Not loaded;Not loaded;Not loaded;0;Not loaded;High-Tech/Electroménager;POMME DATA NETWORK - 23 - fdn mai 2055 - fr;-40;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;[];Not loaded;Not loadede\n"\
+                        "@banquepopulaire;Not loaded;2025-06-10 00:00:00;Not loaded;Not loaded;Not loaded;0;Not loaded;Hyper/supermarché;PICURD - 060625 CB****0022;-61.39999999999999857891452847979962825775146484375;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;Not loaded;[];Not loaded;Not loadede\n"\
                         )
                 .arg(date.year()).arg(date.month()).arg(date.day())
                 ;
