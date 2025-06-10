@@ -39,7 +39,7 @@ void MailGenerator::SendMail(const QTime & timestampStart, const QString & amoun
     qDebug() << "MailGenerator : End sending error mail...";
 }
 
-void MailGenerator::SendMail(const QTime & timestampStart, bool sendToCc)
+void MailGenerator::SendMail(const QTime & timestampStart, bool sendToCc, bool stubMail)
 {
     qDebug() << "MailGenerator : Start sending mail...";
     QString mailContent = QString("%1\n%2\n%3\n%4\n%5\n%6\n%7\n%8\n%9")
@@ -54,7 +54,16 @@ void MailGenerator::SendMail(const QTime & timestampStart, bool sendToCc)
             .arg(m_categorizedDetailTable);
 
     QString subject = QString("[Gripsec %2€] Analyse du %1").arg(QDate::currentDate().toString("dd.MM.yyyy")).arg(double(m_spendableAmount));
-    this->Send(subject, mailContent, sendToCc);
+
+    if(stubMail)
+    {
+        qInfo() << subject;
+        qInfo() << mailContent;
+    }
+    else
+    {
+        this->Send(subject, mailContent, sendToCc);
+    }
     qDebug() << "MailGenerator : End sending mail...";
 }
 
@@ -189,17 +198,18 @@ void MailGenerator::ProcessExpenses(const expense_categorized & expenseCategoriz
                                   "            <col style=\"width:22%\">\n"\
                                   "            <col>\n"\
                                   "          </colgroup>\n"\
-                                  "          <tr><th>Date</th><th>Montant</th><th>Libellé</th></tr>\n");
+                                  "          <tr><th>Date</th><th>Montant</th><th>Libellé</th><th>Catégorie</th></tr>\n");
 
         std::sort(expenseUncategorizedList.begin(), expenseUncategorizedList.end(), compare);
 
         for(int i=0; i<expenseUncategorizedList.size(); ++i)
         {
             const uncategorized_data & current = expenseUncategorizedList.at(i);
-            m_categorizedTable.append(QString("          <tr><td class=\"white\">%1</td><td class=\"coloredCenter\">%2</td><td class=\"whiteCenter\">%3</td></tr>\n")
+            m_categorizedTable.append(QString("          <tr><td class=\"white\">%1</td><td class=\"coloredCenter\">%2</td><td class=\"whiteCenter\">%3</td><td class=\"whiteCenter\">%4</td></tr>\n")
                                       .arg(current.date.toString("dd/MM/yyyy"))
                                       .arg(QString::number( static_cast<double>(current.amount), 'f', 2))
-                                      .arg(current.label));
+                                      .arg(current.label)
+                                      .arg(current.bank_cateory));
         }
 
         m_categorizedTable.append(QString("%1\n%2\n")
@@ -228,6 +238,7 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const float &
                          "            </colgroup>\n"\
                          "            <tr><th>  </th><th>Montant réel</th><th>Affecté</th><th>Epargne pure</th></tr>\n");
 
+    double sumSet = 0.0;
     for(int i=0; i<fullBalances.size(); ++i)
     {
         double full_amount = double(fullBalances.at(i).second.first);
@@ -236,6 +247,7 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const float &
 
         if(set_ammount>0.0f)
         {
+            sumSet += set_ammount;
             m_balances.append(QString("            <tr><td class=\"tdRight\">%1</td><td class=\"tdRight\">%2 Eur</td><td class=\"tdRight\">%3 Eur</td><td class=\"tdRight\">%4 Eur</td></tr>\n")
                                 .arg(fullBalances.at(i).first)
                                 .arg(full_amount)
@@ -252,6 +264,7 @@ void MailGenerator::ProcessBalances(const balances & fullBalances, const float &
         }
     }
     m_balances.append("        </table>\n        </p>\n");
+    m_balances.append(QString("        <p>Somme affectées : %1 € </p>\n").arg(QString::number(sumSet, 'f', 2)));
 }
 
 void MailGenerator::ProcessSaving(const savings & allSavings, const balances &allBalances)
@@ -292,6 +305,7 @@ void MailGenerator::ProcessSaving(const savings & allSavings, const balances &al
 
 void MailGenerator::ProcessLiabilities(const QList<Liability> & liabilities)
 {
+    double sumDebts = 0.0;
     m_debts = QString("        <h1>Dettes</h1>\n");
     if(liabilities.size() == 0)
     {
@@ -314,6 +328,7 @@ void MailGenerator::ProcessLiabilities(const QList<Liability> & liabilities)
         }
         else
         {
+            sumDebts += static_cast<double>(debt.currentAmount);
             if(debt.payementDoneForThisMonth)
             {
                 debtStr = QString("        <p>Mensualité reçue pour %1 [%2] Initial=%3Eur<br>Il reste encore %4Eur</p>\n")
@@ -333,6 +348,7 @@ void MailGenerator::ProcessLiabilities(const QList<Liability> & liabilities)
         }
         m_debts.append(debtStr);
     }
+    m_debts.append(QString("        <p>Somme des dettes : %1 € </p>\n").arg(QString::number(sumDebts, 'f', 2)));
 }
 
 void MailGenerator::ProcessRemainingMonthlyExpense(const QList<MonthlyExpense> & remainingExpenses)
@@ -380,7 +396,7 @@ void MailGenerator::ProcessExpensesDetail(expense_categorized_detail categorized
                                   "            <col style=\"width:22%\">\n"\
                                   "            <col>\n"\
                                   "          </colgroup>\n"\
-                                  "          <tr><th>Date</th><th>Montant</th><th>Libellé</th></tr>\n");
+                                  "          <tr><th>Date</th><th>Montant</th><th>Libellé</th><th>Catégorie</th></tr>\n");
 
         QList<uncategorized_data> category = categorizedDetails[key];
         std::sort(category.begin(), category.end(), compare);
@@ -388,9 +404,10 @@ void MailGenerator::ProcessExpensesDetail(expense_categorized_detail categorized
         for(int k = 0; k < category.size(); ++k)
         {
             const uncategorized_data & current = category.at(k);
-            m_categorizedDetailTable.append(QString("          <tr><td class=\"white\">%1</td><td class=\"coloredCenter\">%2</td><td class=\"whiteCenter\">%3</td></tr>\n")
+            m_categorizedDetailTable.append(QString("          <tr><td class=\"white\">%1</td><td class=\"coloredCenter\">%2</td><td class=\"whiteCenter\">%3</td><td class=\"whiteCenter\">%4</td></tr>\n")
                                       .arg(current.date.toString("dd/MM/yyyy"))
                                       .arg(QString::number( static_cast<double>(current.amount), 'f', 2))
+                                      .arg(current.bank_cateory)
                                       .arg(current.label));
         }
 

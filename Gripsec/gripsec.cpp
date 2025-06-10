@@ -88,6 +88,7 @@ int GripSec::AnalyseAccount(bool sendToCc, bool stubWoob)
     QString amount;
 
     bool wrapperSucces = false;
+    bool stubMail = stubWoob;
 
     if (stubWoob)
     {
@@ -137,7 +138,7 @@ int GripSec::AnalyseAccount(bool sendToCc, bool stubWoob)
             senderProcess.ProcessRemainingMonthlyExpense(remainingMonthlyExpense);
             senderProcess.ProcessExpensesDetail(categorizedDetails);//expense_categorized_detail categorizedDetails;
 
-            senderProcess.SendMail(startTS, sendToCc);
+            senderProcess.SendMail(startTS, sendToCc, stubMail);
             return NO_ERROR;
         }
 

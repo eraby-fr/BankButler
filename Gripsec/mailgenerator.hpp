@@ -24,7 +24,7 @@ public:
 
     void ProcessExpensesDetail(expense_categorized_detail categorizedDetails);
 
-    void SendMail(const QTime & timestampStart, bool sendToCc);
+    void SendMail(const QTime & timestampStart, bool sendToCc, bool stubMail);
 
     void SendMail(const QTime & timestampStart, const QString & amount, const QString & history);
 

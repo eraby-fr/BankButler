@@ -127,11 +127,16 @@ bool BankWrapper::InjectHardcodedAmount(QString &output)
 }
 bool BankWrapper::InjectHardcodedHistory(QString &output, QDate date)
 {
-    output = QString(" Date         Category     Label                                                  Amount\n"\
+    output = QString(   " Date         Category     Label                                                  Amount\n"\
                         "------------+------------+---------------------------------------------------+-----------\n"\
-                        " %1-%2-%3   Card         SNCF DOUAI                                             200.00\n"\
-                        " %1   Transfer     HELLO WORLD                                             39.03\n"\
-                        " 2022-01-26   Card         BOUTIQ75PARIS                                          -11.60\n"
+                        " 2025-05-21   Crédit       ECHEANCE DE CREDIT - DONT CAP    194,32 ASS.    0,    -194.32\n"\
+                        " 2025-05-22   Virement reç LAMBD OYJ - REF 7U DeadDeadDeadnbvcxw 313739 - 7 2      84.55\n"\
+                        " 2025-05-22   Virement reç MHP PRESTATIONS SANTE PL -                              9.00\n"\
+                        " 2025-05-21   Chèque - à c CHEQUE N° ...0401 - 444520052888532040000BPL  1600     -50.00\n"\
+                        " 2025-05-21   Vêtements et Zaro.com       ES Arteixo - 170525 CB****0000 - 67     -67.85\n"\
+                        " 2025-05-20   Virement reç ASS FORMATION PERMANENTE - BRE007 ANFH 0072-5-13 2     343.89\n"\
+                        " 2025-05-20   Carburant    INTERMARCHE - 180525 CB****0000                        -66.00\n"\
+
                         )
                 .arg(date.year()).arg(date.month()).arg(date.day())
                 ;

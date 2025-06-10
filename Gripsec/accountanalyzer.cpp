@@ -113,6 +113,7 @@ void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_cate
         QDate date = QDate::fromString(dateStr, date_format);
         currentLine = currentLine.mid(11);
 
+        QString bank_category = currentLine.left(14).trimmed();
         currentLine = currentLine.mid(14);
 
         float amount = currentLine.right(11).trimmed().toFloat();
@@ -126,12 +127,13 @@ void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_cate
             const QList<QRegularExpression> & refRegExList = m_RegExp.at(regexIndex).patternList;
             for(int listIndex=0; (listIndex<refRegExList.size() && !entry_found ); ++listIndex)
             {
-                QRegularExpressionMatch match = refRegExList.at(listIndex).match(label);
-                if(match.hasMatch())
+                QRegularExpressionMatch match_lbl = refRegExList.at(listIndex).match(label);
+                QRegularExpressionMatch match_category = refRegExList.at(listIndex).match(bank_category);
+                if(match_lbl.hasMatch() || match_category.hasMatch())
                 {
                     qDebug() << "        -> MATCH Category : " << m_RegExp.at(regexIndex).category << "(" << refRegExList.at(listIndex).pattern() << ")" << amount;
                     insertCategorized(m_RegExp.at(regexIndex), amount, out_categorized);
-                    out_categorized_detail[m_RegExp.at(regexIndex).category].append(uncategorized_data(date, label, amount));
+                    out_categorized_detail[m_RegExp.at(regexIndex).category].append(uncategorized_data(date, bank_category, label, amount));
                     entry_found = true;
                 }
             }
@@ -139,7 +141,7 @@ void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_cate
 
         if(!entry_found)
         {
-            out_uncategorized.append(uncategorized_data(date, label, amount));
+            out_uncategorized.append(uncategorized_data(date, bank_category, label, amount));
         }
 
         QMutableListIterator<MonthlyExpense> it(m_MonthlyExpense);

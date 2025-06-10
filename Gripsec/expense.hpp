@@ -29,19 +29,22 @@ typedef struct amount
 typedef struct uncategorized_data
 {
     QDate date;
+    QString bank_cateory;
     QString label;
     float amount;
 
     uncategorized_data()
     {
         date = QDate::currentDate();
+        bank_cateory = "";
         label = "";
         amount = 0.0f;
     }
 
-    uncategorized_data(const QDate & date_in, const QString & str, float value)
+    uncategorized_data(const QDate & date_in, const QString & bank_cat_str, const QString & str, float value)
     {
         date = QDate(date_in);
+        bank_cateory = bank_cat_str;
         label = str;
         amount = value;
     }
