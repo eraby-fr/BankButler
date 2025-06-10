@@ -123,10 +123,11 @@ void AccountAnalyzer::ParseBankHistory(const QString & inputSample, expense_cate
             qDebug() << "        -> DROP Line : because splittedLine.size() < INDEX_HISTORY_AMOUNT";
         }
 
-        QDate date = QDate::fromString(splittedLine.at(INDEX_HISTORY_DATE), date_format);
+        QDate date = QDate::fromString(splittedLine.at(INDEX_HISTORY_DATE).split(" ")[0], date_format);
         QString bank_category = splittedLine.at(INDEX_HISTORY_CATEGORY);
         QString label = splittedLine.at(INDEX_HISTORY_LABEL);
         float amount = splittedLine.at(INDEX_HISTORY_AMOUNT).toFloat();
+        qDebug() << "                  -> Parse result : " << date << bank_category << amount << label;
 
         bool entry_found = false;
         for(int regexIndex=0; (regexIndex<m_RegExp.size() && !entry_found ); ++regexIndex)

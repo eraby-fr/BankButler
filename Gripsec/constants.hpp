@@ -9,4 +9,4 @@ typedef QList<QPair<QString, QPair<float, float>>> balances;
 typedef QMultiMap<QString, QPair<QString, float>> savings;
 
 const QString list_separator = "||";
-const QString date_format = "yyyy-MM-dd hh:mm:ss";
+const QString date_format = "yyyy-MM-dd";
