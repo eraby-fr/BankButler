@@ -6,6 +6,9 @@
 #include <QDebug>
 #include <QDate>
 
+const int INDEX_HISTORY_AMOUNT = 10;
+const int INDEX_HISTORY_DATE = 2;
+
 LiabilityManager::LiabilityManager(const QSettings & config)
 {
     QString filepath = config.fileName();
@@ -68,21 +71,30 @@ void LiabilityManager::processLiability(const QString & entry, Liability& debt)
 {
     if(debt.payementDoneForThisMonth)
     {
+        qDebug() << "    -> LiabilityManager drop because payement already done";
         return;
     }
 
-    float amount = entry.right(11).trimmed().toFloat();
+    QStringList splittedLine = entry.split(";");
+    if(splittedLine.size() < INDEX_HISTORY_AMOUNT)
+    {
+        qDebug() << "    -> DROP Line : because splittedLine.size() < INDEX_HISTORY_AMOUNT";
+    }
+
+    QDate date = QDate::fromString(splittedLine.at(INDEX_HISTORY_DATE).split(" ")[0], date_format);
+    float amount = splittedLine.at(INDEX_HISTORY_AMOUNT).toFloat();
+
     if(amount <0.0f)
     {amount = amount * -1.0f;}
 
     debt.currentAmount -= amount;
     debt.payementDoneForThisMonth = true;
 
+    qDebug() << "    -> Update liability: new date:" << date.toString(date_format) << "amount applied:" << amount << "New remaining:"<<debt.currentAmount;
     //Update ini file
     QSettings debtIni(debt.fileName, QSettings::IniFormat);
     debtIni.setValue(QString("CurrentAmount"), debt.currentAmount);
-    QString dateStr = entry.left(11).trimmed();
-    debtIni.setValue(QString("LastPayementDate"), dateStr);
+    debtIni.setValue(QString("LastPayementDate"), date.toString(date_format));
     debtIni.sync();
 }
 
